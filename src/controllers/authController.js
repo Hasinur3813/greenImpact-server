@@ -1,6 +1,9 @@
 import User from "../models/User.js";
 import bcrypt from "bcrypt";
 import { genereteToken } from "../utils/jwt.js";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+dotenv.config();
 
 export const register = async (req, res, next) => {
   const user = req.body;
@@ -45,6 +48,7 @@ export const login = async (req, res, next) => {
   const { email, password } = req.body;
   try {
     const user = await User.findOne({ email });
+
     if (!user) {
       return res.status(400).json({
         success: false,
@@ -76,6 +80,30 @@ export const login = async (req, res, next) => {
         error: false,
         message: "Sussessfully logged in",
       });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// detect user in front-end if user is logged in or not
+export const detectUser = async (req, res, next) => {
+  try {
+    const token = req.cookies?.token;
+    if (!token) {
+      return res.status(401).json({
+        success: false,
+        error: true,
+        message: "Unauthorized",
+      });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    res.status(200).json({
+      success: true,
+      error: false,
+      message: "User is logged in",
+      data: { user: decoded },
+    });
   } catch (error) {
     next(error);
   }
