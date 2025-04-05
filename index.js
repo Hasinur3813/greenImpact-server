@@ -34,6 +34,7 @@ app.get("/", (req, res) => {
 
 app.use("/api", eventRoute);
 app.use("/api/auth", authRoute);
+app.use("/api/auth/logout", authRoute);
 app.use("/api/auth/user", authRoute);
 
 // middleware to handle 404 error

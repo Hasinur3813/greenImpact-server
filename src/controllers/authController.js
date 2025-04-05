@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 dotenv.config();
 
+// register user
 export const register = async (req, res, next) => {
   const user = req.body;
   try {
@@ -38,12 +39,23 @@ export const register = async (req, res, next) => {
         success: true,
         error: false,
         message: "User created successfully",
+        data: {
+          user: {
+            _id: newUser._id,
+            name: newUser.name,
+            email: newUser.email,
+            role: newUser.role,
+            createdAt: newUser.createdAt,
+            updatedAt: newUser.updatedAt,
+          },
+        },
       });
   } catch (error) {
     next(error);
   }
 };
 
+// log in user
 export const login = async (req, res, next) => {
   const { email, password } = req.body;
   try {
@@ -79,6 +91,32 @@ export const login = async (req, res, next) => {
         success: true,
         error: false,
         message: "Sussessfully logged in",
+        data: {
+          user: {
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            createdAt: user.createdAt,
+            updatedAt: user.updatedAt,
+          },
+        },
+      });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// logout user
+export const logout = async (req, res, next) => {
+  try {
+    res
+      .clearCookie("token")
+      .status(200)
+      .json({
+        message: "Successfully Logged out",
+        success: true,
+        error: false,
       });
   } catch (error) {
     next(error);
@@ -98,11 +136,12 @@ export const detectUser = async (req, res, next) => {
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.id).select("-password");
     res.status(200).json({
       success: true,
       error: false,
       message: "User is logged in",
-      data: { user: decoded },
+      data: { user: user },
     });
   } catch (error) {
     next(error);
