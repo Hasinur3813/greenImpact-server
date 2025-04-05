@@ -8,6 +8,7 @@ import connectDB from "./src/config/db.js";
 import globalErrorHandle from "./src/middlewares/globalErrorHandle.js";
 import noRouteFound from "./src/middlewares/noRouteFound.js";
 import eventRoute from "./src/routes/eventRoute.js";
+import authRoute from "./src/routes/authRoute.js";
 
 dotenv.config();
 const app = express();
@@ -32,6 +33,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api", eventRoute);
+app.use("/api/auth", authRoute);
 
 // middleware to handle 404 error
 app.use(noRouteFound);
