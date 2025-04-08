@@ -19,7 +19,7 @@ app.use(helmet());
 app.use(morgan("dev"));
 app.use(
   cors({
-    origin: ["http://localhost:5173"],
+    origin: ["http://localhost:5173", "https://greenimpact-gamma.vercel.app"],
     credentials: true,
   })
 );
@@ -34,8 +34,6 @@ app.get("/", (req, res) => {
 
 app.use("/api", eventRoute);
 app.use("/api/auth", authRoute);
-app.use("/api/auth/logout", authRoute);
-app.use("/api/auth/user", authRoute);
 
 // middleware to handle 404 error
 app.use(noRouteFound);

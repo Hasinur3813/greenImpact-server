@@ -110,14 +110,11 @@ export const login = async (req, res, next) => {
 // logout user
 export const logout = async (req, res, next) => {
   try {
-    res
-      .clearCookie("token")
-      .status(200)
-      .json({
-        message: "Successfully Logged out",
-        success: true,
-        error: false,
-      });
+    res.clearCookie("token").status(200).json({
+      message: "Successfully Logged out",
+      success: true,
+      error: false,
+    });
   } catch (error) {
     next(error);
   }
@@ -145,5 +142,64 @@ export const detectUser = async (req, res, next) => {
     });
   } catch (error) {
     next(error);
+  }
+};
+
+// get all users
+
+export const allUsers = async (req, res, next) => {
+  try {
+    // Fetch all users from the database
+    const users = await User.find().select("-password");
+
+    res.status(200).json({
+      success: true,
+      error: false,
+      message: "Users retrieved successfully",
+      data: { users },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Change user role
+export const changeUserRole = async (req, res, next) => {
+  try {
+    const { id, role } = req.query; // Extract user ID and new role from query parameters
+
+    console.log(id, role);
+    // Validate input
+    if (!id || !role) {
+      return res.status(400).json({
+        success: false,
+        error: true,
+        message: "User ID and role are required",
+      });
+    }
+
+    // Update the user's role
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      { role },
+      { new: true, runValidators: true } // Return the updated document and validate the role
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({
+        success: false,
+        error: true,
+        message: "User not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      error: false,
+      message: "User role updated successfully",
+      data: { user: updatedUser },
+    });
+  } catch (error) {
+    next(error); // Pass the error to the global error handler
   }
 };

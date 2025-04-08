@@ -58,3 +58,29 @@ export const updateEvent = async (req, res, next) => {
     next(error); // Pass the error to the global error handler
   }
 };
+
+export const deleteEvent = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    // Find the event by ID and delete it
+    const deletedEvent = await Event.findByIdAndDelete(id);
+
+    if (!deletedEvent) {
+      return res.status(404).json({
+        success: false,
+        error: true,
+        message: "Event not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      error: false,
+      message: "Event deleted successfully",
+      data: { event: deletedEvent },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
