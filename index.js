@@ -9,6 +9,7 @@ import globalErrorHandle from "./src/middlewares/globalErrorHandle.js";
 import noRouteFound from "./src/middlewares/noRouteFound.js";
 import eventRoute from "./src/routes/eventRoute.js";
 import authRoute from "./src/routes/authRoute.js";
+import donationRoute from "./src/routes/donationRoute.js";
 
 dotenv.config();
 const app = express();
@@ -34,6 +35,7 @@ app.get("/", (req, res) => {
 
 app.use("/api", eventRoute);
 app.use("/api/auth", authRoute);
+app.use("/api/donation", donationRoute);
 
 // middleware to handle 404 error
 app.use(noRouteFound);
