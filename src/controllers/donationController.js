@@ -22,6 +22,8 @@ export const saveDonation = async (req, res, next) => {
 export const getAllDonations = async (req, res, next) => {
   try {
     const donorId = req.params?.id;
+    const search = req.query;
+    console.log(search);
     const donations = await Donation.find({ donor: donorId }).populate(
       "donor",
       "name email"
